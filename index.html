@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Estudiantes</title>
-
+    <style>
+        /* Estilos opcionales para mejorar la apariencia */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        button {
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body class="home">
- 
-
-     
     <div class="container">
-      
         <h1>Tabla de Estudiantes</h1>
 
         <form action="" id="form">
@@ -24,23 +32,90 @@
         </form>
         <table>
             <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Matrícula</th>
-                <th>Nota</th>
-              </tr>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Matrícula</th>
+                    <th>Nota</th>
+                    <th>Acciones</th> <!-- Columna para las acciones de editar y borrar -->
+                </tr>
             </thead>
             <tbody id="cont">
-
+                <!-- Los estudiantes se agregarán aquí -->
             </tbody>
-          </table>
+        </table>
     </div>
 
+    <script>
+        // Función para editar un estudiante
+        function editarEstudiante(row) {
+            var cells = row.querySelectorAll('td');
+            var nuevoNombre = prompt("Editar nombre:", cells[0].textContent);
+            var nuevoApellido = prompt("Editar apellido:", cells[1].textContent);
+            var nuevaMatricula = prompt("Editar matrícula:", cells[2].textContent);
+            var nuevaNota = prompt("Editar nota:", cells[3].textContent);
+            if (nuevoNombre !== null && nuevoApellido !== null && nuevaMatricula !== null && nuevaNota !== null) {
+                cells[0].textContent = nuevoNombre;
+                cells[1].textContent = nuevoApellido;
+                cells[2].textContent = nuevaMatricula;
+                cells[3].textContent = nuevaNota;
+            }
+        }
 
-   
-   
-    
-    <script src="./app.js"></script>
+        // Función para borrar un estudiante
+        function borrarEstudiante(row) {
+            if (confirm("¿Seguro que quieres borrar este estudiante?")) {
+                row.remove();
+            }
+        }
+
+        // Agregar eventos a los botones de editar y borrar al cargar la página
+        document.addEventListener("DOMContentLoaded", function() {
+            var editButtons = document.querySelectorAll('.edit-btn');
+            var deleteButtons = document.querySelectorAll('.delete-btn');
+
+            editButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    editarEstudiante(button.parentNode.parentNode);
+                });
+            });
+
+            deleteButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    borrarEstudiante(button.parentNode.parentNode);
+                });
+            });
+        });
+
+        // Funciones para agregar estudiantes desde el formulario
+        document.getElementById('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var nombre = form.elements['name'].value;
+            var apellido = form.elements['lastn'].value;
+            var matricula = form.elements['mati'].value;
+            var nota = form.elements['note'].value;
+            agregarEstudiante(nombre, apellido, matricula, nota);
+            form.reset();
+        });
+
+        // Función para agregar un estudiante a la tabla
+        function agregarEstudiante(nombre, apellido, matricula, nota) {
+            var tbody = document.getElementById('cont');
+            var row = document.createElement('tr');
+            row.innerHTML = '<td>' + nombre + '</td>' +
+                '<td>' + apellido + '</td>' +
+                '<td>' + matricula + '</td>' +
+                '<td>' + nota + '</td>' +
+                '<td><button class="edit-btn">Editar</button> <button class="delete-btn">Borrar</button></td>';
+            tbody.appendChild(row);
+            row.querySelector('.edit-btn').addEventListener('click', function() {
+                editarEstudiante(row);
+            });
+            row.querySelector('.delete-btn').addEventListener('click', function() {
+                borrarEstudiante(row);
+            });
+        }
+    </script>
 </body>
 </html>
